@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon %}
+
+{% block title %}关于个人笔记{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">关于个人笔记</h1>
+  <p class="page-subtitle">用心记录，让知识更有价值。</p>
+
+  <section class="card">
+    <h2 class="card__title">项目简介</h2>
+    <p>
+      个人笔记是一款面向个人写作的在线笔记应用。它不追求复杂的功能堆叠，
+      只保留写作真正需要的部分：安安静静地写一段文字，整理成自己的知识手账，
+      需要时再把它分享出去。
+    </p>
+  </section>
+
+  <section class="card">
+    <h2 class="card__title">功能概览</h2>
+    <ul class="feature-list">
+      <li>注册登录：邮箱注册，登录后即可开始写作。</li>
+      <li>笔记写作：Markdown 编辑与实时预览，支持保存草稿与发布。</li>
+      <li>版本记录：每次修改都会留下快照，可回看旧版本。</li>
+      <li>分享：生成分享链接，可设置访问密码，随时关闭。</li>
+      <li>评论与收藏：分享出去的笔记可以收到评论，喜欢的笔记可以收藏。</li>
+      <li>AI 润色：划词选中文字后右键，即可对选中内容做润色。</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2 class="card__title">技术栈</h2>
+    <p>
+      后端使用 Python 3.12 与 Flask，数据存放在 SQLite 中，
+      通过 Flask-SQLAlchemy 访问，登录态由 Flask-Login 维护；
+      前端为原生 HTML、CSS 与 JavaScript，
+      Markdown 由 marked 解析并经 DOMPurify 消毒后渲染。
+    </p>
+  </section>
+
+  <section class="card">
+    <h2 class="card__title">使用提示</h2>
+    <ul class="feature-list">
+      <li>如何分享：在笔记详情页打开「分享设置」的开关，复制生成的链接即可；关闭开关后链接立即失效。</li>
+      <li>如何开启评论：在详情页「评论」卡片里切换评论开关，关闭后不再接收新评论。</li>
+      <li>如何使用 AI 润色：在写笔记或编辑笔记时选中一段文字，点击右键菜单中的「AI 润色」，确认后再替换原文。</li>
+      <li>未配置大模型密钥时，AI 润色会返回模拟结果并在界面上标明，不影响其他功能。</li>
+    </ul>
+  </section>
+{% endblock %}

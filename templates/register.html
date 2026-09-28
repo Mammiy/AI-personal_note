@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}注册 · 个人笔记{% endblock %}
+
+{% block content %}
+  <div class="auth">
+    <h1 class="page-title">注册</h1>
+    <p class="page-subtitle">创建账号后即可开始记录。</p>
+
+    <form class="card" id="register-form" novalidate>
+      <p class="field__error" id="form-error" role="alert"></p>
+
+      <div class="field" id="field-email">
+        <label class="field__label" for="email">邮箱</label>
+        <input class="field__control" type="email" id="email" name="email"
+               autocomplete="email" aria-describedby="email-error" />
+        <p class="field__error" id="email-error" role="alert"></p>
+      </div>
+
+      <div class="field" id="field-username">
+        <label class="field__label" for="username">用户名</label>
+        <input class="field__control" type="text" id="username" name="username"
+               autocomplete="nickname" aria-describedby="username-error" />
+        <p class="field__error" id="username-error" role="alert"></p>
+      </div>
+
+      <div class="field" id="field-password">
+        <label class="field__label" for="password">密码</label>
+        <input class="field__control" type="password" id="password" name="password"
+               autocomplete="new-password" aria-describedby="password-error" />
+        <p class="field__error" id="password-error" role="alert"></p>
+      </div>
+
+      <div class="field" id="field-confirm">
+        <label class="field__label" for="confirm">确认密码</label>
+        <input class="field__control" type="password" id="confirm" name="confirm"
+               autocomplete="new-password" aria-describedby="confirm-error" />
+        <p class="field__error" id="confirm-error" role="alert"></p>
+      </div>
+
+      <button class="btn btn--primary btn--block" type="submit" id="submit-btn">注册</button>
+      <p class="auth__switch">已有账号？<a href="/login">去登录</a></p>
+    </form>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/register.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon %}
+
+{% block title %}工作台 · 个人笔记{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">工作台</h1>
+  <p class="page-subtitle">Phase 1 占位页，统计卡片与最近文章将在 Phase 2 实现。</p>
+
+  <section class="card">
+    <div class="empty">
+      <span class="empty__icon">{{ icon("note", 40) }}</span>
+      <p>工作台正在建设中</p>
+      <a class="btn btn--primary" href="/">回到主页</a>
+    </div>
+  </section>
+{% endblock %}

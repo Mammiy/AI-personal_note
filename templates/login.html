@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}登录 · 个人笔记{% endblock %}
+
+{% block content %}
+  <div class="auth">
+    <h1 class="page-title">登录</h1>
+    <p class="page-subtitle">登录后继续你的记录。</p>
+
+    <form class="card" id="login-form" novalidate>
+      <p class="field__error" id="form-error" role="alert"></p>
+
+      <div class="field" id="field-email">
+        <label class="field__label" for="email">邮箱</label>
+        <input class="field__control" type="email" id="email" name="email"
+               autocomplete="email" aria-describedby="email-error" />
+        <p class="field__error" id="email-error" role="alert"></p>
+      </div>
+
+      <div class="field" id="field-password">
+        <label class="field__label" for="password">密码</label>
+        <input class="field__control" type="password" id="password" name="password"
+               autocomplete="current-password" aria-describedby="password-error" />
+        <p class="field__error" id="password-error" role="alert"></p>
+      </div>
+
+      <button class="btn btn--primary btn--block" type="submit" id="submit-btn">登录</button>
+      <p class="auth__switch">还没有账号？<a href="/register">去注册</a></p>
+    </form>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+{% endblock %}
