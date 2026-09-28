@@ -4,14 +4,45 @@
 {% block title %}工作台 · 个人笔记{% endblock %}
 
 {% block content %}
-  <h1 class="page-title">工作台</h1>
-  <p class="page-subtitle">Phase 1 占位页，统计卡片与最近文章将在 Phase 2 实现。</p>
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">工作台</h1>
+      <p class="page-subtitle">随时回到这里，继续写下一段。</p>
+    </div>
+    <div class="page-head__actions">
+      <a class="btn btn--primary" href="/notes/new">新建文章</a>
+      <a class="btn btn--outline" href="/notes">我的文章</a>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="card stat-card">
+      <span class="stat-card__value" id="stat-draft">0</span>
+      <span class="stat-card__label">草稿</span>
+    </div>
+    <div class="card stat-card">
+      <span class="stat-card__value" id="stat-published">0</span>
+      <span class="stat-card__label">已发布</span>
+    </div>
+    <div class="card stat-card">
+      <span class="stat-card__value" id="stat-favorite">0</span>
+      <span class="stat-card__label">收藏</span>
+    </div>
+  </div>
 
   <section class="card">
-    <div class="empty">
+    <h2 class="card__title">最近文章</h2>
+    <div class="note-list" id="recent-list">
+      <div class="loading"><span class="spinner"></span>加载中…</div>
+    </div>
+    <div class="empty" id="recent-empty" hidden>
       <span class="empty__icon">{{ icon("note", 40) }}</span>
-      <p>工作台正在建设中</p>
-      <a class="btn btn--primary" href="/">回到主页</a>
+      <p>还没有文章，点"新建文章"开始记录</p>
+      <a class="btn btn--primary" href="/notes/new">新建文章</a>
     </div>
   </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/workspace.js') }}"></script>
 {% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon %}
+
+{% block title %}我的文章 · 个人笔记{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">我的文章</h1>
+      <p class="page-subtitle">用关键词、标签与状态找到想找的那一篇。</p>
+    </div>
+    <div class="page-head__actions">
+      <a class="btn btn--primary" href="/notes/new">新建文章</a>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="field">
+      <label class="field__label" for="keyword">搜索</label>
+      <input class="field__control" id="keyword" type="search" placeholder="搜索标题或正文…" />
+    </div>
+
+    <div class="filter-row">
+      <span class="filter-row__label">标签：</span>
+      <div class="chip-list" id="tag-filter"></div>
+    </div>
+
+    <div class="filter-row">
+      <span class="filter-row__label">状态：</span>
+      <div class="chip-list" id="status-filter">
+        <button type="button" class="chip chip--button is-active" data-status="">全部</button>
+        <button type="button" class="chip chip--button" data-status="draft">草稿</button>
+        <button type="button" class="chip chip--button" data-status="published">已发布</button>
+      </div>
+    </div>
+
+    <div class="filter-summary">
+      <span class="card__meta" id="filter-count"></span>
+      <button type="button" class="btn btn--text" id="clear-filter" hidden>清空筛选</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="note-list" id="note-list">
+      <div class="loading"><span class="spinner"></span>加载中…</div>
+    </div>
+    <div class="empty" id="empty-state" hidden>
+      <span class="empty__icon">{{ icon("note", 40) }}</span>
+      <p id="empty-text"></p>
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/notes.js') }}"></script>
+{% endblock %}

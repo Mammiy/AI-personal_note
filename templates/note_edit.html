@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon %}
+
+{% block title %}{{ "编辑笔记" if note_id else "写笔记" }} · 个人笔记{% endblock %}
+
+{% block content %}
+  {# 页面唯一 h1：写作页的视觉主标题就是标题输入框，这里只给无障碍树 #}
+  <h1 class="sr-only">{{ "编辑笔记" if note_id else "写笔记" }}</h1>
+
+  <div class="page-head">
+    <a class="btn btn--text" href="/notes">← 返回</a>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn--outline" id="save-draft">保存草稿</button>
+    <button type="button" class="btn btn--primary" id="publish">{{ icon("send", 18) }}发布文章</button>
+  </div>
+
+  <section class="card editor">
+    <input class="editor__title" id="title" type="text" maxlength="100"
+           placeholder="文章标题..." aria-label="文章标题" />
+
+    <div class="editor__tags">
+      <label class="field__label" for="tags">标签：</label>
+      <input class="field__control editor__tags-input" id="tags" type="text"
+             placeholder="用逗号分隔，例如：生活,工作,随笔" />
+    </div>
+
+    <div class="toolbar">
+      <div class="toolbar__group" id="toolbar">
+        <button type="button" class="tool-btn" data-action="h1" title="一级标题" aria-label="一级标题">H1</button>
+        <button type="button" class="tool-btn" data-action="h2" title="二级标题" aria-label="二级标题">H2</button>
+        <button type="button" class="tool-btn" data-action="bold" title="加粗" aria-label="加粗">B</button>
+        <button type="button" class="tool-btn" data-action="italic" title="斜体" aria-label="斜体">I</button>
+        <button type="button" class="tool-btn" data-action="quote" title="引用" aria-label="引用">{{ icon("quote", 18) }}</button>
+        <button type="button" class="tool-btn" data-action="code" title="行内代码" aria-label="行内代码">{{ icon("code", 18) }}</button>
+        <button type="button" class="tool-btn" data-action="ul" title="无序列表" aria-label="无序列表">{{ icon("list-ul", 18) }}</button>
+        <button type="button" class="tool-btn" data-action="ol" title="有序列表" aria-label="有序列表">{{ icon("list-ol", 18) }}</button>
+        <button type="button" class="tool-btn" data-action="link" title="插入链接" aria-label="插入链接">{{ icon("link", 18) }}</button>
+        <button type="button" class="tool-btn" data-action="image" title="插入图片" aria-label="插入图片">{{ icon("image", 18) }}</button>
+      </div>
+      <button type="button" class="btn btn--outline toolbar__preview" id="toggle-preview" aria-pressed="false">
+        {{ icon("eye", 18) }}<span id="preview-label">预览</span>
+      </button>
+    </div>
+
+    <div class="popover" id="image-panel" hidden>
+      <button type="button" class="btn btn--outline" id="upload-image">{{ icon("upload", 18) }}本地上传</button>
+      <span class="popover__or">或</span>
+      <input class="field__control popover__input" id="image-url" type="url" placeholder="图片链接" />
+      <button type="button" class="btn btn--primary" id="insert-image-url">插入</button>
+      <input class="sr-only" id="file-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
+    </div>
+
+    <textarea class="editor__body" id="content" placeholder="开始书写你的笔记..."></textarea>
+    <div class="markdown-body" id="preview" hidden></div>
+
+    <p class="editor__hint">
+      支持 Markdown：**粗体**、*斜体*、`行内代码`、&gt; 引用、- 列表、[链接](url)、![图片](url)
+    </p>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/note_edit.js') }}"></script>
+{% endblock %}

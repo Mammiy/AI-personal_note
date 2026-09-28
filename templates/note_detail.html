@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon %}
+
+{% block title %}笔记详情 · 个人笔记{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <a class="btn btn--text" href="/notes">← 返回列表</a>
+  </div>
+
+  <section class="card">
+    <div class="note-head">
+      <h1 class="note-title" id="note-title"></h1>
+      <div class="note-head__actions">
+        <a class="btn btn--outline" id="edit-btn">{{ icon("pen", 18) }}编辑</a>
+        <button type="button" class="btn btn--danger" id="delete-btn">{{ icon("trash", 18) }}删除</button>
+      </div>
+    </div>
+    <div class="note-meta" id="note-meta"></div>
+  </section>
+
+  <section class="card">
+    <div class="markdown-body" id="note-content"></div>
+  </section>
+
+  {# Phase 3 填充：分享设置卡片 #}
+  <section class="card" id="share-card" hidden>
+    <h2 class="card__title">分享设置</h2>
+  </section>
+
+  {# Phase 3 填充：评论卡片 #}
+  <section class="card" id="comment-card" hidden>
+    <h2 class="card__title">评论</h2>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/note_detail.js') }}"></script>
+{% endblock %}

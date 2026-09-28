@@ -42,6 +42,30 @@ python app.py
 python -m pytest tests -q
 ```
 
+前端纯逻辑（`api.js`、编辑器文本变换、列表筛选、Markdown 渲染管线）用 Node 内置测试运行器：
+
+```bash
+node --test "tests/js/*.test.js"
+```
+
+## 前端第三方库
+
+Markdown 渲染与消毒使用本地 vendor 库，不依赖外部 CDN，版本锁定如下：
+
+| 库 | 版本 | 文件 |
+|---|---|---|
+| marked | 18.0.14 | `static/js/vendor/marked.umd.js` |
+| DOMPurify | 3.4.16 | `static/js/vendor/purify.min.js` |
+
+下载来源：
+
+```bash
+curl -L -o static/js/vendor/marked.umd.js https://cdn.jsdelivr.net/npm/marked@18.0.14/lib/marked.umd.js
+curl -L -o static/js/vendor/purify.min.js https://cdn.jsdelivr.net/npm/dompurify@3.4.16/dist/purify.min.js
+```
+
+正文只在前端渲染一次：`renderMarkdown()`（`static/js/markdown.js`）先由 marked 解析，再交给 DOMPurify 消毒，预览与详情页共用。
+
 ## 配置说明
 
 | 配置项 | 环境变量 | 默认值 | 说明 |

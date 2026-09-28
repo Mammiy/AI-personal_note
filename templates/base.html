@@ -39,6 +39,10 @@
 
   <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
   <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+  {# Markdown 渲染与消毒：vendor 必须早于页面脚本，消毒不可绕过 #}
+  <script src="{{ url_for('static', filename='js/vendor/marked.umd.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/vendor/purify.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/markdown.js') }}"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       var logoutBtn = document.getElementById("logout-btn");
