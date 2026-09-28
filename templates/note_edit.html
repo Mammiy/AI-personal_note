@@ -57,9 +57,59 @@
       支持 Markdown：**粗体**、*斜体*、`行内代码`、&gt; 引用、- 列表、[链接](url)、![图片](url)
     </p>
   </section>
+
+  {# 划词后的右键菜单：无选区时「AI 润色」置灰不可点 #}
+  <div class="ctx-menu" id="ctx-menu" role="menu" aria-label="编辑区右键菜单" hidden>
+    <button type="button" class="ctx-menu__item" id="ctx-ai-polish" role="menuitem">
+      {{ icon("quill", 16) }}AI 润色
+    </button>
+  </div>
+
+  {# AI 润色弹窗：左「原文」只读 / 右「润色结果」，加载中 / 成功 / 失败三态 #}
+  <div class="modal-mask" id="ai-polish-mask" hidden>
+    <div class="modal modal--wide polish" id="ai-polish-modal" role="dialog" aria-modal="true"
+         aria-labelledby="ai-polish-title">
+      <div class="polish__head">
+        <h2 class="modal__title polish__title" id="ai-polish-title">{{ icon("quill", 18) }}AI 文本润色</h2>
+        <button type="button" class="polish__close" id="ai-polish-close" aria-label="关闭润色弹窗">×</button>
+      </div>
+
+      <div class="polish__body">
+        <section class="polish__col">
+          <h3 class="polish__label">原文</h3>
+          <textarea class="field__control polish__text" id="ai-polish-source" readonly
+                    aria-label="原文"></textarea>
+        </section>
+
+        <section class="polish__col">
+          <div class="polish__label-row">
+            <h3 class="polish__label">润色结果</h3>
+            <span class="badge" id="ai-polish-badge" hidden></span>
+          </div>
+          <p class="polish__hint" id="ai-polish-hint"></p>
+
+          <div class="polish__loading" id="ai-polish-loading" hidden>
+            <span class="spinner"></span>
+            <span id="ai-polish-loading-text"></span>
+          </div>
+
+          <textarea class="field__control polish__text" id="ai-polish-result" readonly
+                    aria-label="润色结果"></textarea>
+          <p class="polish__error" id="ai-polish-error" role="alert" hidden></p>
+          <button type="button" class="btn btn--outline polish__retry" id="ai-polish-retry" hidden>重试</button>
+        </section>
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--outline" id="ai-polish-cancel">取消</button>
+        <button type="button" class="btn btn--primary" id="ai-polish-confirm">确认替换</button>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block scripts %}
   <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/ai_polish.js') }}"></script>
   <script src="{{ url_for('static', filename='js/note_edit.js') }}"></script>
 {% endblock %}

@@ -629,6 +629,184 @@ textarea.field__control {
   }
 }
 
+/* ---------- 右键上下文菜单 ---------- */
+
+.ctx-menu {
+  position: fixed;
+  z-index: 60;
+  min-width: 148px;
+  padding: 4px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+}
+
+.ctx-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 32px;
+  padding: 0 10px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.ctx-menu__item:hover:not(:disabled),
+.ctx-menu__item:focus-visible {
+  background-color: var(--surface-muted);
+  outline: 2px solid var(--gold);
+  outline-offset: -2px;
+}
+
+.ctx-menu__item:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---------- AI 润色弹窗 ---------- */
+
+.polish {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px 20px;
+}
+
+.polish__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.polish__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+  margin-bottom: 0;
+}
+
+.polish__close {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--ink-soft);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.polish__close:hover {
+  color: var(--ink);
+  background-color: var(--surface-muted);
+}
+
+.polish__close:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.polish__body {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.polish__col {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 12px 16px 16px;
+}
+
+.polish__col + .polish__col {
+  border-left: 1px solid var(--border);
+}
+
+.polish__label-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.polish__label {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--brown-strong);
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.polish__label-row .polish__label {
+  margin-bottom: 0;
+}
+
+.polish__hint {
+  min-height: 18px;
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.polish__text {
+  width: 100%;
+  min-height: 260px;
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.8;
+  resize: none;
+}
+
+.polish__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 260px;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.polish__error {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: var(--danger);
+}
+
+.polish__retry {
+  margin-top: 12px;
+}
+
+/* 只调 AI 弹窗的底部间距，不动既有确认弹窗 */
+.polish .modal__actions {
+  margin-top: 16px;
+}
+
+/* ---------- 徽标 ---------- */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--ink-soft);
+  background-color: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+}
+
 /* ---------- 动效降级 ---------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -639,5 +817,36 @@ textarea.field__control {
     transition-delay: 0ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  /* 不做动画时旋转指示没有意义，直接退化成静态文案 */
+  .spinner {
+    display: none;
+  }
+}
+
+/* ---------- AI 弹窗响应式：窄屏左右栏纵向堆叠 ---------- */
+
+@media (max-width: 767px) {
+  .polish__body {
+    flex-direction: column;
+  }
+
+  .polish__col + .polish__col {
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .polish__text,
+  .polish__loading {
+    min-height: 160px;
+  }
+
+  .polish .modal__actions {
+    flex-wrap: wrap;
+  }
+
+  .polish .modal__actions .btn {
+    flex: 1 1 auto;
   }
 }

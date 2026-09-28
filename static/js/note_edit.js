@@ -23,6 +23,8 @@
     const fileInput = document.getElementById("file-input");
     const saveBtn = document.getElementById("save-draft");
     const publishBtn = document.getElementById("publish");
+    const ctxMenu = document.getElementById("ctx-menu");
+    const ctxPolish = document.getElementById("ctx-ai-polish");
 
     // 点击工具栏或文件选择器会让 textarea 失焦，操作前先把选区记下来
     let selection = { start: 0, end: 0 };
@@ -81,6 +83,81 @@
           return undefined;
       }
     }
+
+    // ---------- 右键上下文菜单：仅「AI 润色」一项，无选区时置灰 ----------
+
+    function closeMenu(backToEditor) {
+      if (ctxMenu.hidden) return;
+      ctxMenu.hidden = true;
+      if (backToEditor) {
+        contentEl.focus();
+        contentEl.setSelectionRange(selection.start, selection.end);
+      }
+    }
+
+    function openMenu(x, y) {
+      ctxPolish.disabled = !AiPolish.hasSelection(selection.start, selection.end);
+      ctxMenu.hidden = false;
+
+      const rect = ctxMenu.getBoundingClientRect();
+      const pos = AiPolish.menuPosition(
+        x,
+        y,
+        rect.width,
+        rect.height,
+        window.innerWidth,
+        window.innerHeight
+      );
+      ctxMenu.style.left = pos.left + "px";
+      ctxMenu.style.top = pos.top + "px";
+      ctxPolish.focus();
+    }
+
+    contentEl.addEventListener("contextmenu", function (event) {
+      event.preventDefault();
+      rememberSelection();
+      openMenu(event.clientX, event.clientY);
+    });
+
+    // Shift+F10 / 菜单键：键盘也能唤起菜单
+    contentEl.addEventListener("keydown", function (event) {
+      if (!AiPolish.isMenuKey(event)) return;
+      event.preventDefault();
+      const rect = contentEl.getBoundingClientRect();
+      openMenu(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    });
+
+    // Esc 关闭菜单：焦点可能在编辑区（菜单项置灰时无法聚焦），所以挂到 document
+    document.addEventListener("keydown", function (event) {
+      if (event.key !== "Escape" || ctxMenu.hidden) return;
+      closeMenu(true);
+    });
+
+    ctxPolish.addEventListener("click", function () {
+      if (ctxPolish.disabled) return;
+      const start = selection.start;
+      const end = selection.end;
+      closeMenu(false);
+      AiPolish.open({
+        textarea: contentEl,
+        start: start,
+        end: end,
+        text: contentEl.value.slice(start, end),
+      });
+    });
+
+    document.addEventListener("click", function (event) {
+      if (ctxMenu.hidden || ctxMenu.contains(event.target)) return;
+      closeMenu(false);
+    });
+
+    window.addEventListener("scroll", function () {
+      closeMenu(false);
+    }, true);
+
+    window.addEventListener("resize", function () {
+      closeMenu(false);
+    });
 
     toolbarEl.addEventListener("click", function (event) {
       const button = event.target.closest("[data-action]");
