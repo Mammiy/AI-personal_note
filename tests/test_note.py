@@ -536,3 +536,91 @@ def test_empty_published_at_is_empty_string(client):
     note = create_note(client).get_json()["data"]
 
     assert note["published_at"] == ""
+
+
+# ---------- 版本接口 ----------
+
+
+def versions_of(client, note_id):
+    return client.get(f"/api/notes/{note_id}/versions")
+
+
+def test_new_note_has_no_versions(client):
+    signup(client)
+    note_id = create_note(client).get_json()["data"]["id"]
+
+    body = versions_of(client, note_id).get_json()
+
+    assert body["code"] == Code.OK
+    assert body["data"]["items"] == []
+
+
+def test_two_updates_produce_two_versions_newest_first(client):
+    signup(client)
+    note_id = create_note(client).get_json()["data"]["id"]
+
+    client.put(
+        f"/api/notes/{note_id}",
+        json={"title": "第一次改", "content": "第一次正文", "tags": "随笔", "status": "draft"},
+    )
+    client.put(
+        f"/api/notes/{note_id}",
+        json={"title": "第二次改", "content": "第二次正文", "tags": "工作", "status": "draft"},
+    )
+
+    body = versions_of(client, note_id).get_json()
+
+    assert body["code"] == Code.OK
+    items = body["data"]["items"]
+    assert len(items) == 2
+    # 时间倒序：最新一次更新前的快照排最前
+    assert [item["title"] for item in items] == ["第一次改", "第一篇笔记"]
+    assert set(items[0]) == {"id", "title", "created_at"}
+
+
+def test_version_detail_returns_the_historical_snapshot(client):
+    signup(client)
+    note_id = create_note(client).get_json()["data"]["id"]
+    client.put(
+        f"/api/notes/{note_id}",
+        json={"title": "改后标题", "content": "改后正文", "tags": "随笔", "status": "draft"},
+    )
+
+    version_id = versions_of(client, note_id).get_json()["data"]["items"][0]["id"]
+    body = client.get(f"/api/notes/{note_id}/versions/{version_id}").get_json()
+
+    assert body["code"] == Code.OK
+    assert body["data"]["title"] == "第一篇笔记"
+    assert body["data"]["content"] == "正文内容"
+    assert body["data"]["tags"] == ["生活", "工作"]
+    assert set(body["data"]) == {"title", "content", "tags", "created_at"}
+
+
+def test_other_users_versions_are_forbidden(client, db_session):
+    signup(client, email="owner@example.com", username="作者")
+    note_id = create_note(client).get_json()["data"]["id"]
+    client.put(
+        f"/api/notes/{note_id}",
+        json={"title": "改后", "content": "改后正文", "tags": "", "status": "draft"},
+    )
+    version_id = db_session.query(NoteVersion).one().id
+    client.post("/api/auth/logout", json={})
+    signup(client, email="other@example.com", username="路人")
+
+    listed = versions_of(client, note_id).get_json()
+    detail = client.get(f"/api/notes/{note_id}/versions/{version_id}").get_json()
+
+    assert listed["code"] == Code.FORBIDDEN
+    assert listed["message"] == "没有权限执行该操作"
+    assert detail["code"] == Code.FORBIDDEN
+
+
+def test_version_endpoints_require_login(client):
+    assert versions_of(client, 1).get_json()["code"] == Code.UNAUTHORIZED
+    assert client.get("/api/notes/1/versions/1").get_json()["code"] == Code.UNAUTHORIZED
+
+
+def test_versions_of_missing_note_are_forbidden(client):
+    signup(client)
+
+    assert versions_of(client, 9999).get_json()["code"] == Code.FORBIDDEN

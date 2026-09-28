@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon %}
+
+{% block title %}分享笔记 · 个人笔记{% endblock %}
+
+{% block content %}
+  {# 页面唯一 h1：文案由 share.js 按状态写入，骨架不注入任何笔记内容 #}
+  <div class="share-page">
+    <h1 class="share-heading" id="share-heading">分享已关闭</h1>
+
+    {# 状态二：待输入密码 #}
+    <section class="card" id="share-gate-card" hidden>
+      <div class="share-gate">
+        <div class="share-gate__row">
+          <label class="sr-only" for="share-password">访问密码</label>
+          <input class="field__control" id="share-password" type="password" placeholder="请输入访问密码" autocomplete="current-password" />
+          <button type="button" class="btn btn--primary" id="share-verify-btn">查看</button>
+        </div>
+        <p class="share-gate__error" id="share-gate-error" role="alert"></p>
+      </div>
+    </section>
+
+    {# 状态三：正常阅读 #}
+    <section class="card" id="share-read" hidden>
+      <div class="note-meta" id="share-meta"></div>
+      <div class="markdown-body" id="share-content" style="margin-top:16px"></div>
+    </section>
+
+    {# 访客评论区：作者开启评论时才出现，访客需填昵称 #}
+    <section class="card" id="share-comment-card" hidden>
+      <h2 class="card__title">评论 <span id="share-comment-count">(0)</span></h2>
+
+      <ul class="comment-list" id="share-comment-list"></ul>
+
+      <div id="share-comment-form">
+        <div class="share-guest">
+          <label class="sr-only" for="share-guest-name">昵称</label>
+          <input class="field__control" id="share-guest-name" type="text" maxlength="20" placeholder="你的昵称（1-20 字）" />
+        </div>
+        <label class="sr-only" for="share-comment-input">评论内容</label>
+        <textarea class="field__control comment-input" id="share-comment-input" rows="3" placeholder="写下你的评论…"></textarea>
+        <div class="row row--end">
+          <button type="button" class="btn btn--primary" id="share-comment-submit">{{ icon("send", 18) }}发布</button>
+        </div>
+      </div>
+    </section>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    window.SHARE_TOKEN = {{ token | tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='js/share.js') }}"></script>
+{% endblock %}

@@ -77,3 +77,16 @@ def note_edit(id):
     if note is None:
         return render_template("404.html"), 404
     return render_template("note_edit.html", note_id=id)
+
+
+@bp.get("/profile")
+@login_required
+def profile():
+    """个人主页：三区块内容由 profile.js 拉取渲染。"""
+    return render_template("profile.html")
+
+
+@bp.get("/s/<token>")
+def share(token):
+    """分享页：只给骨架，笔记内容一律由 share.js 拉接口后再渲染。"""
+    return render_template("share.html", token=token)

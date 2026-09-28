@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon %}
+
+{% block title %}个人主页 · 个人笔记{% endblock %}
+
+{% block content %}
+  <div class="profile">
+    <h1 class="page-title">个人主页</h1>
+
+    <section class="card">
+      <h2 class="card__title">个人信息</h2>
+      <div class="profile__grid">
+        <p class="profile__item"><span class="profile__label">用户名</span><span id="profile-username"></span></p>
+        <p class="profile__item"><span class="profile__label">邮箱</span><span id="profile-email"></span></p>
+        <p class="profile__item"><span class="profile__label">注册时间</span><span id="profile-created"></span></p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="card__title">我的收藏</h2>
+      <ul class="fav-list" id="fav-list"></ul>
+      <p class="empty" id="fav-empty" hidden>还没有收藏的笔记</p>
+    </section>
+
+    <section class="card">
+      <h2 class="card__title">笔记历史</h2>
+
+      <div class="history-picker">
+        <label class="sr-only" for="note-select">选择笔记</label>
+        <select id="note-select">
+          <option value="">请选择一篇笔记</option>
+        </select>
+      </div>
+
+      <ul class="version-list" id="version-list"></ul>
+      <p class="empty" id="version-empty" hidden>还没有版本记录</p>
+
+      <div class="version-view" id="version-view" hidden>
+        <h3 id="version-title"></h3>
+        <div class="note-meta" id="version-meta"></div>
+        <div class="markdown-body" id="version-content" style="margin-top:12px"></div>
+      </div>
+    </section>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+{% endblock %}

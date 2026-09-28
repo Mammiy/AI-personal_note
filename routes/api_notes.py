@@ -5,6 +5,7 @@ from flask_login import current_user, login_required
 
 from extensions import db
 from models import Note
+from services import favorite as favorite_service
 from services import note as note_service
 from utils.errors import ApiError
 from utils.response import Code, ok
@@ -71,7 +72,11 @@ def update(id):
 @login_required
 def detail(id):
     note = _own_note(id)
-    return ok({"note": note_service.public_note(note), "can_edit": True})
+    return ok(
+        note_service.detail_payload(
+            note, current_user, favorite_service.is_favorited(current_user, note)
+        )
+    )
 
 
 @bp.delete("/api/notes/<int:id>")
@@ -80,3 +85,19 @@ def delete(id):
     note = _own_note(id)
     note_service.delete_note(note)
     return ok({})
+
+
+@bp.get("/api/notes/<int:id>/versions")
+@login_required
+def versions(id):
+    """版本列表：只暴露标题与时间，按时间倒序。"""
+    note = _own_note(id)
+    return ok(note_service.list_versions(note))
+
+
+@bp.get("/api/notes/<int:id>/versions/<int:vid>")
+@login_required
+def version_detail(id, vid):
+    """单个旧版本：只读快照，不提供恢复入口。"""
+    note = _own_note(id)
+    return ok(note_service.version_payload(note, vid))

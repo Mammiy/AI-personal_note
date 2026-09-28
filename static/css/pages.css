@@ -585,6 +585,360 @@ body.app-bg--home main.container {
   text-align: center;
 }
 
+/* ---------- 卡片头部与开关行 ---------- */
+
+.card__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.card__head .card__title {
+  margin-bottom: 0;
+}
+
+.card__head-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.card__toggle {
+  margin-left: auto;
+  min-height: 32px;
+  padding: 0 4px;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 32px;
+  margin-top: 12px;
+}
+
+.setting-row__label {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+/* ---------- 分享设置 ---------- */
+
+.share-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.share-link__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  background-color: var(--surface-muted);
+  color: var(--ink-soft);
+}
+
+.share-password {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.share-password__icon {
+  display: inline-flex;
+  color: var(--brown);
+  flex: 0 0 auto;
+}
+
+.share-password .field__control {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* ---------- 分享页 ---------- */
+
+.share-page {
+  max-width: 760px;
+  margin: 32px auto 0;
+}
+
+.share-heading {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+.share-heading--muted {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--ink-soft);
+  text-align: center;
+  padding: 32px 0;
+}
+
+.share-gate {
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.share-gate__hint {
+  margin-bottom: 12px;
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: center;
+}
+
+.share-gate__row {
+  display: flex;
+  gap: 8px;
+}
+
+.share-gate__row .field__control {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.share-gate__error {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--danger);
+  min-height: 18px;
+}
+
+.share-title {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+/* ---------- 评论 ---------- */
+
+.comment-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.comment {
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+
+.comment:first-child {
+  border-top: 0;
+}
+
+.comment--empty {
+  padding: 20px 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+.comment__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.comment__name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.comment__time {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.comment__content {
+  margin: 6px 0 0;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--ink);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.comment-input {
+  margin-top: 12px;
+  resize: vertical;
+}
+
+.share-guest {
+  margin-top: 12px;
+}
+
+.btn--danger-text {
+  margin-left: auto;
+  color: var(--danger);
+  min-height: 32px;
+}
+
+/* ---------- 收藏按钮 ---------- */
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: color 200ms ease, border-color 200ms ease, background-color 200ms ease;
+}
+
+.icon-btn:hover {
+  color: var(--brown);
+  border-color: var(--brown);
+}
+
+.icon-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.icon-btn[aria-pressed="true"],
+.icon-btn--active {
+  color: var(--brown);
+  border-color: var(--brown);
+  background-color: var(--surface-muted);
+}
+
+/* ---------- 个人主页 ---------- */
+
+.profile {
+  max-width: 860px;
+  margin: 32px auto 0;
+}
+
+.profile__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.profile__item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.profile__label {
+  flex: 0 0 auto;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.fav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fav-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+
+.fav-row:first-child {
+  border-top: 0;
+}
+
+.fav-row__title {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.fav-row__title:hover {
+  color: var(--brown);
+}
+
+.fav-row__meta {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.history-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.history-picker select {
+  flex: 1 1 220px;
+  min-width: 0;
+  height: 36px;
+  padding: 0 10px;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.version-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+.version-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 0;
+  font-family: inherit;
+  font-size: 14px;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--border);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.version-row:hover {
+  color: var(--brown);
+}
+
+.version-row__time {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.version-view {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
 /* ---------- 响应式 ---------- */
 
 @media (max-width: 1023px) {
@@ -678,5 +1032,32 @@ body.app-bg--home main.container {
 
   .auth {
     margin-top: 24px;
+  }
+
+  /* 分享页密码框与按钮纵向排列，避免溢出 */
+  .share-gate__row {
+    flex-direction: column;
+  }
+
+  .share-link,
+  .share-password {
+    flex-wrap: wrap;
+  }
+
+  .share-link .btn,
+  .share-password .btn {
+    width: 100%;
+  }
+
+  .profile__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .note-title {
+    font-size: 24px;
+  }
+
+  .share-title {
+    font-size: 24px;
   }
 }

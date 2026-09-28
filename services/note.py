@@ -8,6 +8,7 @@ from sqlalchemy import or_
 
 from extensions import db
 from models import Comment, Favorite, Note, NoteVersion
+from services import share as share_service
 from utils.errors import ApiError
 from utils.response import Code
 
@@ -73,6 +74,21 @@ def public_note(note):
         "created_at": format_time(note.created_at),
         "updated_at": format_time(note.updated_at),
         "published_at": format_time(note.published_at),
+    }
+
+
+def detail_payload(note, viewer=None, is_favorited=False):
+    """详情页聚合数据：正文之外补上分享、评论与收藏状态。
+
+    字段集合独立于 public_note，避免影响列表与写接口的既有出参。
+    """
+    return {
+        "note": public_note(note),
+        "can_edit": viewer is not None and note.user_id == viewer.id,
+        "allow_comments": note.allow_comments,
+        "is_shared": note.is_shared,
+        "share_url": share_service.share_url(note) if note.share_token else "",
+        "is_favorited": bool(is_favorited),
     }
 
 
@@ -186,6 +202,35 @@ def workspace_summary(user):
             }
             for item in recent
         ],
+    }
+
+
+def list_versions(note):
+    """版本列表：只给 id、标题与时间，按时间倒序。"""
+    rows = (
+        NoteVersion.query.filter_by(note_id=note.id)
+        .order_by(NoteVersion.created_at.desc(), NoteVersion.id.desc())
+        .all()
+    )
+    return {
+        "items": [
+            {"id": row.id, "title": row.title, "created_at": format_time(row.created_at)}
+            for row in rows
+        ]
+    }
+
+
+def version_payload(note, version_id):
+    """单个旧版本快照，只读；不属于该笔记一律按无权限处理。"""
+    row = db.session.get(NoteVersion, version_id)
+    if row is None or row.note_id != note.id:
+        raise ApiError(Code.FORBIDDEN, "没有权限执行该操作")
+
+    return {
+        "title": row.title,
+        "content": row.content,
+        "tags": normalize_tags(row.tags),
+        "created_at": format_time(row.created_at),
     }
 
 

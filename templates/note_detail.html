@@ -12,6 +12,9 @@
     <div class="note-head">
       <h1 class="note-title" id="note-title"></h1>
       <div class="note-head__actions">
+        <button type="button" class="icon-btn" id="favorite-btn" aria-pressed="false" aria-label="收藏">
+          <span id="favorite-icon">{{ icon("heart", 20) }}</span>
+        </button>
         <a class="btn btn--outline" id="edit-btn">{{ icon("pen", 18) }}编辑</a>
         <button type="button" class="btn btn--danger" id="delete-btn">{{ icon("trash", 18) }}删除</button>
       </div>
@@ -23,14 +26,50 @@
     <div class="markdown-body" id="note-content"></div>
   </section>
 
-  {# Phase 3 填充：分享设置卡片 #}
   <section class="card" id="share-card" hidden>
-    <h2 class="card__title">分享设置</h2>
+    <div class="card__head">
+      <h2 class="card__title">分享设置</h2>
+      <button type="button" class="btn btn--text card__toggle" id="share-toggle" aria-expanded="true" aria-controls="share-body">收起</button>
+    </div>
+    <div id="share-body">
+      <div class="setting-row">
+        <span class="setting-row__label" id="share-state">分享已关闭</span>
+        <button type="button" class="switch" id="share-switch" role="switch" aria-checked="false" aria-label="分享开关"></button>
+      </div>
+
+      <div class="share-link">
+        <label class="sr-only" for="share-link-input">分享链接</label>
+        <input class="field__control share-link__input" id="share-link-input" type="text" readonly value="" placeholder="开启分享后自动生成链接" />
+        <button type="button" class="btn btn--outline" id="copy-link-btn">{{ icon("copy", 18) }}复制</button>
+      </div>
+
+      <div class="share-password">
+        <span class="share-password__icon">{{ icon("lock", 18) }}</span>
+        <label class="sr-only" for="share-password-input">分享密码</label>
+        <input class="field__control" id="share-password-input" type="password" placeholder="输入新密码（留空移除）" autocomplete="new-password" />
+        <button type="button" class="btn btn--primary" id="save-password-btn">保存密码</button>
+      </div>
+    </div>
   </section>
 
-  {# Phase 3 填充：评论卡片 #}
   <section class="card" id="comment-card" hidden>
-    <h2 class="card__title">评论</h2>
+    <div class="card__head">
+      <h2 class="card__title">评论 <span id="comment-count">(0)</span></h2>
+      <div class="card__head-right">
+        <span class="setting-row__label" id="comment-state">评论已开启</span>
+        <button type="button" class="switch" id="comment-switch" role="switch" aria-checked="true" aria-label="评论开关"></button>
+      </div>
+    </div>
+
+    <ul class="comment-list" id="comment-list"></ul>
+
+    <div id="comment-form">
+      <label class="sr-only" for="comment-input">评论内容</label>
+      <textarea class="field__control comment-input" id="comment-input" rows="3" placeholder="写下你的评论…"></textarea>
+      <div class="row row--end">
+        <button type="button" class="btn btn--primary" id="comment-submit-btn">{{ icon("send", 18) }}发布</button>
+      </div>
+    </div>
   </section>
 {% endblock %}
 
