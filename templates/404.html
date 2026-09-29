@@ -4,6 +4,8 @@
 {% block title %}页面不存在 · 个人笔记{% endblock %}
 
 {% block content %}
+  {# 页面唯一 h1：视觉上由空状态图形承担，这里只补无障碍标题 #}
+  <h1 class="sr-only">页面不存在</h1>
   <div class="card empty-page">
     <div class="empty">
       <span class="empty__icon">{{ icon("note", 40) }}</span>

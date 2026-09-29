@@ -36,6 +36,15 @@ python app.py
 
 打开 <http://127.0.0.1:5000> 即可访问。首次启动会自动创建数据库文件 `instance/notes.db` 与上传目录 `static/uploads/`。
 
+若 5000 端口被系统或其他程序占用（Windows 下可能提示 `WinError 10013`），改用其他端口启动：
+
+```bash
+# Windows PowerShell
+$env:APP_PORT="5057"; python app.py
+# macOS / Linux / Git Bash
+APP_PORT=5057 python app.py
+```
+
 ### 4. 运行测试
 
 ```bash
@@ -71,6 +80,7 @@ curl -L -o static/js/vendor/purify.min.js https://cdn.jsdelivr.net/npm/dompurify
 | 配置项 | 环境变量 | 默认值 | 说明 |
 |---|---|---|---|
 | `SECRET_KEY` | `SECRET_KEY` | 自动生成并写入 `instance/secret.key` | 会话签名密钥，请勿提交到仓库 |
+| 监听地址 / 端口 | `APP_HOST` / `APP_PORT` | `127.0.0.1` / `5000` | 开发服务器绑定地址，端口被占用时可覆盖 |
 | `AI_BASE_URL` | `AI_BASE_URL` | `https://api.deepseek.com/v1` | OpenAI 兼容的大模型接口地址 |
 | `AI_API_KEY` | `AI_API_KEY` | 空 | 大模型密钥，仅存于服务端环境变量 |
 | `AI_MODEL` | `AI_MODEL` | `deepseek-chat` | 模型名称 |

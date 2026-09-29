@@ -133,6 +133,17 @@
       closeMenu(true);
     });
 
+    // 上下键在菜单项之间移动（跳过置灰项），Enter 由原生 button 触发
+    ctxMenu.addEventListener("keydown", function (event) {
+      if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+      const items = Array.prototype.slice.call(ctxMenu.querySelectorAll('[role="menuitem"]'));
+      if (!items.length) return;
+      event.preventDefault();
+      const step = event.key === "ArrowDown" ? 1 : -1;
+      const next = AiPolish.menuIndex(items, items.indexOf(document.activeElement), step);
+      if (next >= 0) items[next].focus();
+    });
+
     ctxPolish.addEventListener("click", function () {
       if (ctxPolish.disabled) return;
       const start = selection.start;

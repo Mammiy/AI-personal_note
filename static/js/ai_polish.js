@@ -50,6 +50,21 @@
     return (index + step + count) % count;
   }
 
+  /** 右键菜单上下键移动：跳过禁用项并在可选项之间循环，无可选项返回 -1。 */
+  function menuIndex(items, currentIndex, step) {
+    const enabled = [];
+    items.forEach(function (item, index) {
+      if (!item.disabled) enabled.push(index);
+    });
+
+    if (!enabled.length) return -1;
+    const position = enabled.indexOf(currentIndex);
+    if (position === -1) {
+      return step > 0 ? enabled[0] : enabled[enabled.length - 1];
+    }
+    return enabled[(position + step + enabled.length) % enabled.length];
+  }
+
   function canConfirm(status) {
     return status === "success";
   }
@@ -277,6 +292,7 @@
     menuPosition: menuPosition,
     isMenuKey: isMenuKey,
     nextFocusIndex: nextFocusIndex,
+    menuIndex: menuIndex,
     canConfirm: canConfirm,
     badgeText: badgeText,
   };

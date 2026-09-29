@@ -31,31 +31,23 @@ body.app-bg--home main.container {
 .home-hero {
   position: relative;
   display: flex;
-  align-items: flex-end;
-  min-height: 62vh;
-  padding: 72px 24px 80px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 56px;
+  min-height: calc(100vh - 60px);
+  /* 左内边距随视口放大：参考截图中文案贴近左边缘，右侧留给背景主体 */
+  padding: 56px clamp(24px, 6vw, 120px) 64px;
   background-image: url("../img/home-bg.jpg");
   background-size: cover;
   background-position: center;
-}
-
-.home-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(58, 55, 51, 0.62) 0%,
-    rgba(58, 55, 51, 0.3) 44%,
-    rgba(58, 55, 51, 0) 72%
-  );
 }
 
 .home-hero__copy {
   position: relative;
   width: 100%;
   max-width: 1040px;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .home-hero__title {
@@ -63,17 +55,36 @@ body.app-bg--home main.container {
   font-size: clamp(36px, 4.4vw, 60px);
   line-height: 1.35;
   letter-spacing: 0.04em;
-  color: #ffffff;
+  color: var(--brown-strong);
 }
 
-.home-hero__title::after {
-  content: "";
+.home-hero__line {
   display: block;
-  width: 96px;
-  height: 3px;
-  margin-top: 18px;
+}
+
+/* 第二行下方的短装饰下划线（参考截图：金色短线压在「遇见美好」之下） */
+.home-hero__line--last {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 14px;
+}
+
+.home-hero__line--last::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 150px;
+  height: 6px;
+  border-radius: 3px;
   background-color: var(--gold);
-  border-radius: 2px;
+}
+
+.home-hero__heart {
+  display: inline-block;
+  margin-left: 10px;
+  color: var(--gold);
+  vertical-align: 8px;
 }
 
 .home-hero__intro {
@@ -81,7 +92,7 @@ body.app-bg--home main.container {
   margin-top: 18px;
   font-size: 15px;
   line-height: 1.9;
-  color: rgba(255, 255, 255, 0.94);
+  color: var(--ink);
 }
 
 .home-hero__actions {
@@ -91,28 +102,25 @@ body.app-bg--home main.container {
   margin-top: 28px;
 }
 
+/* 四项特性直接叠在主页背景图上：无白卡片、无描边 */
 .home-features {
-  max-width: 1040px;
-  margin: 0 auto;
-  padding: 48px 24px 24px;
+  width: 100%;
+  max-width: 840px;
+  margin: 0;
 }
 
 .home-features__list {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .feature {
-  padding: 20px 16px;
+  padding: 0 8px;
   text-align: center;
-  background-color: rgba(255, 255, 255, 0.88);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-card);
 }
 
 .feature__ring {
@@ -135,7 +143,7 @@ body.app-bg--home main.container {
 }
 
 .feature__desc {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--ink-soft);
 }
 
@@ -155,6 +163,27 @@ body.app-bg--home main.container {
   gap: 12px;
   flex-wrap: wrap;
   margin-left: auto;
+}
+
+/* 页面标题与操作之间的金色装饰线（参考截图：右端带箭头） */
+.page-head__rule {
+  position: relative;
+  flex: 1 1 60px;
+  min-width: 60px;
+  height: 1px;
+  margin: 0 4px;
+  background-color: var(--gold);
+}
+
+.page-head__rule::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  border-left: 6px solid var(--gold);
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
 }
 
 .stat-grid {
@@ -943,8 +972,8 @@ body.app-bg--home main.container {
 
 @media (max-width: 1023px) {
   .home-hero {
-    min-height: 58vh;
-    padding: 56px 16px 64px;
+    gap: 40px;
+    padding: 48px 16px 56px;
   }
 
   /* 工具栏与预览按钮换行，统计卡保持三列 */
@@ -952,19 +981,16 @@ body.app-bg--home main.container {
     gap: 8px;
   }
 
-  .home-features {
-    padding: 32px 16px 24px;
-  }
-
   .home-features__list {
     grid-template-columns: repeat(2, 1fr);
+    gap: 24px 8px;
   }
 }
 
 @media (max-width: 767px) {
   .home-hero {
-    min-height: 56vh;
-    padding: 40px 16px 48px;
+    min-height: calc(100vh - 52px);
+    padding: 32px 16px 40px;
     background-position: center center;
   }
 

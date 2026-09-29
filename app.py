@@ -77,4 +77,9 @@ def create_app(config_object=Config, **overrides):
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    # 端口可用环境变量覆盖：部分 Windows 环境会保留 5000 端口导致绑定失败
+    app.run(
+        host=os.environ.get("APP_HOST", "127.0.0.1"),
+        port=int(os.environ.get("APP_PORT", "5000")),
+        debug=True,
+    )

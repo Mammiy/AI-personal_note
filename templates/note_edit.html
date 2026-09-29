@@ -45,12 +45,12 @@
     <div class="popover" id="image-panel" hidden>
       <button type="button" class="btn btn--outline" id="upload-image">{{ icon("upload", 18) }}本地上传</button>
       <span class="popover__or">或</span>
-      <input class="field__control popover__input" id="image-url" type="url" placeholder="图片链接" />
+      <input class="field__control popover__input" id="image-url" type="url" placeholder="图片链接" aria-label="图片链接" />
       <button type="button" class="btn btn--primary" id="insert-image-url">插入</button>
-      <input class="sr-only" id="file-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
+      <input class="sr-only" id="file-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif" aria-label="选择本地图片" />
     </div>
 
-    <textarea class="editor__body" id="content" placeholder="开始书写你的笔记..."></textarea>
+    <textarea class="editor__body" id="content" placeholder="开始书写你的笔记..." aria-label="正文"></textarea>
     <div class="markdown-body" id="preview" hidden></div>
 
     <p class="editor__hint">

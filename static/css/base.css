@@ -383,13 +383,29 @@ textarea.field__control {
   display: inline-flex;
   align-items: center;
   width: 44px;
-  height: 24px;
+  /* 触控目标：可点区域高 32px（视觉轨道由 ::before 保持 24px） */
+  height: 32px;
+  min-height: 32px;
   flex: 0 0 auto;
   padding: 0;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: none;
+  cursor: pointer;
+}
+
+/* 可见轨道：24px 高，垂直居中在 32px 的可点区域内 */
+.switch::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 24px;
+  transform: translateY(-50%);
   border: 1px solid var(--border);
   border-radius: var(--radius-pill);
   background-color: var(--surface-muted);
-  cursor: pointer;
   transition: background-color 200ms ease, border-color 200ms ease;
 }
 
@@ -407,7 +423,7 @@ textarea.field__control {
   transition: left 200ms ease;
 }
 
-.switch[aria-checked="true"] {
+.switch[aria-checked="true"]::before {
   background-color: var(--brown);
   border-color: var(--brown);
 }

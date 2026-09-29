@@ -228,6 +228,30 @@ test("Tab 在弹窗内循环，Shift+Tab 反向循环", () => {
   assert.equal(AiPolish.nextFocusIndex(-1, 3, 1), 0);
 });
 
+test("右键菜单上下键在可选项之间循环并跳过禁用项", () => {
+  const { AiPolish } = harness();
+  const items = [{ disabled: false }, { disabled: true }, { disabled: false }];
+
+  assert.equal(AiPolish.menuIndex(items, 0, 1), 2);
+  assert.equal(AiPolish.menuIndex(items, 2, 1), 0);
+  assert.equal(AiPolish.menuIndex(items, 0, -1), 2);
+  assert.equal(AiPolish.menuIndex(items, -1, 1), 0);
+  assert.equal(AiPolish.menuIndex(items, -1, -1), 2);
+});
+
+test("右键菜单只有一项时上下键停在原地", () => {
+  const { AiPolish } = harness();
+
+  assert.equal(AiPolish.menuIndex([{ disabled: false }], 0, 1), 0);
+  assert.equal(AiPolish.menuIndex([{ disabled: false }], 0, -1), 0);
+});
+
+test("右键菜单项全部禁用时返回 -1，无项可聚焦", () => {
+  const { AiPolish } = harness();
+
+  assert.equal(AiPolish.menuIndex([{ disabled: true }, { disabled: true }], 0, 1), -1);
+});
+
 test("只有成功态才允许确认替换", () => {
   const { AiPolish } = harness();
 
