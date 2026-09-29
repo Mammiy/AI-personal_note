@@ -128,6 +128,65 @@ def test_simulation_keeps_code_block(app, user):
     assert result == text
 
 
+ORDINARY_PROSE = [
+    "今天天气不错，我去公园散步了。",
+    "人生就像一场旅行，重要的是沿途的风景。",
+    "这篇文章主要讲了作者对生活的感悟。",
+    "读书使人明理，写作使人思考。",
+    "我想练习写作,但是总是坚持不下来.",
+]
+
+
+def test_simulation_rewrites_ordinary_prose(app, user):
+    """回归：模拟润色必须真的改写普通文章。
+
+    用户报障「润色后内容仍然不变」：未配置密钥时走模拟分支，而旧规则表只有
+    10 对词，绝大多数正常段落一字不改，导致「确认替换」后正文与原文完全相同。
+    """
+    for text in ORDINARY_PROSE:
+        result, simulated = run(app, user, text, AI_API_KEY="")
+
+        assert simulated is True
+        assert result != text, f"模拟润色未改写任何内容：{text!r}"
+
+
+def test_simulation_normalizes_chinese_punctuation(app, user):
+    text = "我想练习写作,但是总是坚持不下来."
+
+    result, _ = run(app, user, text, AI_API_KEY="")
+
+    assert "，" in result and "。" in result
+    assert "," not in result and result.rstrip()[-1] != "."
+
+
+def test_simulation_replaces_each_source_word_once(app, user):
+    """单趟改写：替换结果不会被同一趟的后续规则二次替换。"""
+    result, _ = run(app, user, "这道菜不错。", AI_API_KEY="")
+
+    assert result == "这道菜很好。"
+    assert "相当好" not in result
+
+
+def test_simulation_is_deterministic(app, user):
+    text = "然后我觉得这个非常好，因为现在有很多问题。"
+
+    first, _ = run(app, user, text, AI_API_KEY="")
+    second, _ = run(app, user, text, AI_API_KEY="")
+
+    assert first == second
+    assert first != text
+
+
+def test_simulation_keeps_markdown_links_and_images(app, user):
+    text = "参考 [文档](https://example.com/a.b) 与 ![图](x.png)，我觉得不错。"
+
+    result, _ = run(app, user, text, AI_API_KEY="")
+
+    assert "[文档](https://example.com/a.b)" in result
+    assert "![图](x.png)" in result
+    assert "我认为" in result
+
+
 def test_simulation_is_deterministic(app, user):
     text = "因为现在非常难，所以我其实想改。"
 

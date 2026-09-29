@@ -35,6 +35,13 @@
   box-sizing: border-box;
 }
 
+/* hidden 属性必须始终生效：作者样式里的 display 优先级高于 UA 的
+   [hidden]{display:none}，不兜底会让 .modal-mask、.popover、.editor__body
+   这类带 display 的类名在 hidden 状态下依旧参与布局（遮罩常驻会吞掉整页点击）。 */
+[hidden] {
+  display: none !important;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
 }

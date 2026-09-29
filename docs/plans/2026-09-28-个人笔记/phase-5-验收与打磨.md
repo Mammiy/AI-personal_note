@@ -128,7 +128,7 @@
   - Expected: 每张截图与对应参考图在布局、配色、字号层级、间距上一致；不一致处已修正或记录为已确认差异
 - [x] 复核 `base.css` 中 10 个色彩令牌取值未被改动
   - Expected: `--ink:#3A3733`、`--ink-soft:#6B665E`、`--brown-strong:#6B4E2E`、`--brown:#8B7043`、`--gold:#C9A96A`、`--border:#E5DDCE`、`--success-ink:#3E7D4E`、`--success-bg:#E8F0E8`、`--danger:#C0392B`、`--surface:#FFFFFF` 全部保持
-- [x] 复核需求文档「文案规范」24 条文案在界面上逐条一致
+- [x] 复核需求文档「文案规范」文案在界面上逐条一致（Phase 5 时 24 条；交付后补充「润色结果与原文一致，未作修改」，现共 25 条）
   - Expected: 无英文、无实现术语、无遗漏
 
 ---
@@ -151,6 +151,14 @@
 - 真实启动验证：本机 TCP 5000 被系统保留（`WinError 10013`），因此 `app.py` 增加 `APP_HOST` / `APP_PORT` 环境变量覆盖并写入 README；`APP_PORT=5057 python app.py` 启动后 `/` `/api/health` `/api/auth/register` `/api/ai/polish`（模拟回退）`/workspace` `/notes/new` 全部按预期返回。
 - Task 4 视觉核对（主智能体执行）：逐张读取 `项目截图/01~05` 与 `static/img/*.jpg` 后修正三处保真度偏差——① 主页 Hero 原为"深色遮罩 + 白色文字"，参考图为"浅色照片 + 深棕文字"，已去掉遮罩并改用 `--brown-strong`/`--ink`；② 四项特性原为白色卡片，参考图为直接叠在照片上的无卡片样式，已改为透明并移入 Hero 内；③ 工作台原有多余副标题，参考图为「工作台」+ 金色装饰线（右端带箭头），已移除副标题并新增 `.page-head__rule`。另核对：`paper-bg.jpg` 确实含左上/右下花角、右上罗盘、左下羽毛笔，与需求文档「Visual System」描述一致，无需修正文档；`home-bg.jpg` 主体（杯/本子/花）集中在右侧，文案已左对齐并限制宽度避免压住主体。
 - 主页「云端同步」标题按 Deferred #1 保持截图原文，其说明文案已按 F3 要求改为本地数据库口径（「笔记统一保存在本机数据库中，随时打开继续写」），不构成与实现不符的承诺。
+
+**交付后修复记录（master 报障驱动）**
+
+- **「写笔记页所有内容都无法交互，如同贴图」**：根因是 CSS 覆盖了 `hidden` 属性——`#ai-polish-mask` 带 `hidden`，但作者样式 `.modal-mask{position:fixed; inset:0; display:flex; opacity:0}` 优先级高于 UA 的 `[hidden]{display:none}`，遮罩以全屏不可见层常驻并吞掉整页点击。同根因还使 `.popover`、`#content`（预览切换）等元素的 `hidden` 失效。
+  - `static/css/base.css` 增加全局兜底 `[hidden] { display: none !important; }`。
+  - 回归用例：`tests/test_ui_contract.py::test_hidden_elements_are_not_overridden_by_display_rules`（修复前会列出 `badge / btn / empty / modal-mask / polish__loading / popover` 六个违规类名）。
+- 本轮测试总数更新为：`python -m pytest tests -q` → 253 passed；`node --test "tests/js/*.test.js"` → 83 passed。
+- 原「待人工复核」项（三档视口截图、真实浏览器键盘全流程、两个 Deferred 项）仍待 master 确认。
 
 **待人工复核（本环境无浏览器/Playwright，无法自动化）**
 

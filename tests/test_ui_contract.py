@@ -379,3 +379,39 @@ def test_reduced_motion_stops_transitions_and_animations():
     block = BASE_CSS.split("@media (prefers-reduced-motion: reduce)")[1]
     assert "transition-duration" in block
     assert "animation-duration" in block
+
+
+# ---------- hidden 属性必须真正隐藏元素 ----------
+
+
+def hidden_element_classes():
+    """模板里所有带 hidden 属性的元素所用到的类名。"""
+    classes = set()
+    for tpl in sorted(TPL_DIR.glob("*.html")):
+        html = read(tpl)
+        for tag in re.findall(r"<[a-zA-Z][^>]*\shidden\b[^>]*>", html):
+            match = re.search(r'class="([^"]*)"', tag)
+            if match:
+                classes.update(match.group(1).split())
+    return classes
+
+
+def test_hidden_elements_are_not_overridden_by_display_rules():
+    """作者样式里的 display 会盖掉 UA 的 [hidden]{display:none}，必须显式兜底。
+
+    真实事故：`#ai-polish-mask` 带 hidden 但 `.modal-mask{display:flex}` 生效，
+    遮罩以 `position:fixed; inset:0; z-index:50; opacity:0` 常驻并吞掉整页点击，
+    写作页看起来正常却完全点不动。同一根因还会让 `.popover`、`#content`（预览切换）
+    等元素的 hidden 失效。
+    """
+    combined = BASE_CSS + PAGES_CSS
+    offenders = []
+    for cls in sorted(hidden_element_classes()):
+        for block in re.findall(rf"(?m)^\.{re.escape(cls)}\s*\{{([^}}]*)\}}", combined):
+            if re.search(r"display\s*:", block):
+                offenders.append(cls)
+
+    assert offenders, "没有发现带 hidden 又声明 display 的类名，断言需要更新"
+    assert re.search(
+        r"\[hidden\]\s*\{[^}]*display\s*:\s*none\s*!important", combined
+    ), f"以下类名在带 hidden 的元素上声明了 display，会覆盖 UA 的 [hidden] 规则：{offenders}"

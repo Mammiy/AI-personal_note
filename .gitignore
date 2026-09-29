@@ -1,7 +1,30 @@
+# Python 运行产物
 __pycache__/
 *.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# 虚拟环境
 .venv/
 venv/
+
+# 本地运行时数据：SQLite 库、会话密钥、用户上传的图片
 instance/
 static/uploads/
-.pytest_cache/
+
+# 本地私密配置：AI_API_KEY 等密钥只走环境变量或 .env，禁止入库
+.env
+.env.*
+!.env.example
+
+# 编辑器与系统临时文件
+.idea/
+.vscode/
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 视觉参考材料：仅作本地比对用，不入库（应用实际用图已复制到 static/img/）
+图片素材/
+项目截图/

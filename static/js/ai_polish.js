@@ -11,6 +11,7 @@
   const BADGE_TEXT = "模拟结果";
   const SIMULATE_HINT = "尚未配置大模型，当前展示模拟润色结果";
   const REPLACED_TEXT = "已替换选中的文本";
+  const SAME_TEXT_HINT = "润色结果与原文一致，未作修改";
   // Api 已提示过的兜底文案，与 api.js 保持一致
   const FALLBACK_ERROR = "润色失败，请稍后重试";
 
@@ -174,6 +175,13 @@
 
     state.applied = true;
     state.els.confirm.disabled = true;
+
+    // 结果与原文一字不差（模拟规则未命中，或模型原样返回）：明确告知，不做无意义写回
+    if (state.result === state.source) {
+      Toast.show(SAME_TEXT_HINT, "success");
+      close();
+      return;
+    }
 
     const el = state.textarea;
     const next = replaceSelection(el.value, state.start, state.end, state.result);

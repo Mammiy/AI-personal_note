@@ -404,6 +404,23 @@ test("连续快速点击确认替换只回写一次", async () => {
   assert.equal(env.toasts.length, 1);
 });
 
+test("结果与原文一致时明确提示未修改，不做无意义写回", async () => {
+  const env = harness({
+    post: () => Promise.resolve({ text: "BBB", simulated: true }),
+  });
+  const el = textarea(env.doc, "AAABBBCCC", 3, 6);
+  const seen = [];
+  el.addEventListener("input", () => seen.push(el.value));
+
+  await env.AiPolish.open({ textarea: el, start: 3, end: 6, text: "BBB" });
+  env.el("ai-polish-confirm").click();
+
+  assert.equal(el.value, "AAABBBCCC");
+  assert.deepEqual(seen, []);
+  assert.deepEqual(env.toasts, [{ message: "润色结果与原文一致，未作修改", type: "success" }]);
+  assert.equal(env.el("ai-polish-mask").hidden, true);
+});
+
 test("替换后触发一次 input 事件，预览与保存能拿到最新内容", async () => {
   const env = harness({
     post: () => Promise.resolve({ text: "XYZ", simulated: false }),

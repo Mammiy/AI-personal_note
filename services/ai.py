@@ -32,27 +32,85 @@ RATE_LIMIT = 10
 RATE_WINDOW = 60
 _RATE = {}
 
-# 模拟润色的词替换表：有序、每轮只替换一次，保证同一输入结果一致
+# 模拟润色的词替换表：单趟最长优先匹配，避免「不错→很好」又被「很好→相当好」二次改写。
+# 只收录语义等价、口语到书面方向的常见词对，保证不改原意、不引入新事实。
 WORD_MAP = (
     ("然后", "随后"),
     ("但是", "然而"),
     ("因为", "由于"),
     ("所以", "因此"),
+    ("而且", "并且"),
     ("我觉得", "我认为"),
+    ("觉得", "认为"),
     ("其实", "事实上"),
     ("非常", "极为"),
     ("特别", "尤为"),
     ("很多", "诸多"),
     ("一些", "若干"),
     ("现在", "当前"),
+    ("想要", "希望"),
+    ("应该", "应当"),
+    ("可能", "也许"),
+    ("就像", "犹如"),
+    ("好像", "仿佛"),
+    ("一直", "始终"),
+    ("有点", "有些"),
+    ("越来越", "日益"),
+    ("真的", "确实"),
+    ("差不多", "大致"),
+    ("的时候", "时"),
+    ("一起", "共同"),
+    ("看一下", "查看"),
+    ("讲了", "讲述了"),
+    ("主要", "着重"),
+    ("使人", "让人"),
+    ("思考", "深思"),
+    ("感悟", "体悟"),
+    ("表示", "表明"),
+    ("提高", "提升"),
+    ("感觉", "感到"),
+    ("不错", "很好"),
+    ("很好", "相当好"),
+    ("很", "相当"),
 )
 
-# 这些行只做空白规范化，不做词替换，避免破坏 Markdown 标记
+# 冗余表达精简：只删不改，语义不变
+REDUNDANT_MAP = (
+    ("的的", "的"),
+    ("了了", "了"),
+    ("有着", "有"),
+    ("的话，", "，"),
+    ("的话。", "。"),
+)
+
+CJK = "\u4e00-\u9fff"
+
+# 这些行只做空白规范化，不做改写，避免破坏 Markdown 标记
 STRUCTURAL_PREFIXES = ("#", ">", "-", "*", "|")
 ORDERED_ITEM_RE = re.compile(r"^\d+\.")
 
 CN_PUNCTUATION_RE = re.compile(r"([，。、；：！？）】》”])\s+")
+CN_PUNCTUATION_BEFORE_RE = re.compile(r"\s+([，。、；：！？）】》”])")
 SPACES_RE = re.compile(r"[ \t]{2,}")
+# 中文语境（前一字符是汉字）里的半角标点转全角；英文与链接不受影响
+HALF_PUNCTUATION_RE = re.compile(rf"(?<=[{CJK}])([,.;:?!])")
+HALF_PUNCTUATION_MAP = {",": "，", ".": "。", ";": "；", ":": "：", "?": "？", "!": "！"}
+ELLIPSIS_RE = re.compile(rf"(?<=[{CJK}])(?:\.{{3,}}|。{{3,}})")
+DUP_PUNCTUATION_RE = re.compile(r"([，。、；：！？])\1+")
+
+_WORD_RE = re.compile(
+    "|".join(
+        re.escape(source) for source in sorted((s for s, _ in WORD_MAP), key=len, reverse=True)
+    )
+)
+_WORD_LOOKUP = dict(WORD_MAP)
+_REDUNDANT_RE = re.compile(
+    "|".join(
+        re.escape(source)
+        for source in sorted((s for s, _ in REDUNDANT_MAP), key=len, reverse=True)
+    )
+)
+_REDUNDANT_LOOKUP = dict(REDUNDANT_MAP)
 
 
 def polish(text):
@@ -139,7 +197,11 @@ def _strip_fence(text):
 
 
 def _simulate(text):
-    """本地确定性规则改写：结构行与代码块只做空白规范化，其余行做词替换。"""
+    """本地确定性规则改写：结构行与代码块只做空白规范化，其余行做词替换与标点规范化。
+
+    这里是未配置大模型时的降级实现，必须对普通文章产生可见改写（否则「确认替换」
+    后正文与原文一字不差，功能看起来是坏的），同时保持不改原意、不引入新事实。
+    """
     in_code = False
     lines = []
 
@@ -152,7 +214,7 @@ def _simulate(text):
         if in_code or _is_structural(line):
             lines.append(_normalize_spaces(line))
         else:
-            lines.append(_normalize_spaces(_replace_words(line)))
+            lines.append(_normalize_spaces(_polish_line(line)))
 
     return "\n".join(lines)
 
@@ -164,14 +226,28 @@ def _is_structural(line):
     return stripped[0] in STRUCTURAL_PREFIXES or bool(ORDERED_ITEM_RE.match(stripped))
 
 
+def _polish_line(line):
+    """单行改写顺序：词替换 → 冗余精简 → 标点规范化，每步都只做一趟。"""
+    return _normalize_punctuation(_replace_words(_trim_redundancy(line)))
+
+
 def _replace_words(line):
-    for source, target in WORD_MAP:
-        line = line.replace(source, target)
-    return line
+    return _WORD_RE.sub(lambda match: _WORD_LOOKUP[match.group(0)], line)
+
+
+def _trim_redundancy(line):
+    return _REDUNDANT_RE.sub(lambda match: _REDUNDANT_LOOKUP[match.group(0)], line)
+
+
+def _normalize_punctuation(line):
+    """省略号归一 → 中文语境半角标点转全角 → 重复标点合并。"""
+    line = ELLIPSIS_RE.sub("……", line)
+    line = HALF_PUNCTUATION_RE.sub(lambda m: HALF_PUNCTUATION_MAP[m.group(1)], line)
+    return DUP_PUNCTUATION_RE.sub(r"\1", line)
 
 
 def _normalize_spaces(line):
-    """合并行内连续空格、去除行尾空格与中文标点后的多余空格，保留行首缩进。"""
+    """合并行内连续空格、去除行尾空格与中文标点前后的多余空格，保留行首缩进。"""
     stripped = line.rstrip()
     if not stripped:
         return ""
@@ -180,5 +256,6 @@ def _normalize_spaces(line):
     body = stripped[len(indent) :]
     body = SPACES_RE.sub(" ", body)
     body = CN_PUNCTUATION_RE.sub(r"\1", body)
+    body = CN_PUNCTUATION_BEFORE_RE.sub(r"\1", body)
 
     return indent + body
